@@ -315,7 +315,8 @@ function salvarEnderecoAtual(){
     rua: document.getElementById("campo-rua")?.value || "",
     bairro: document.getElementById("campo-bairro")?.value || "",
     cidade: document.getElementById("campo-cidade")?.value || "",
-    numero: document.getElementById("campo-numero")?.value || ""
+    numero: document.getElementById("campo-numero")?.value || "",
+    complemento: document.getElementById("campo-complemento")?.value || ""
   };
   localStorage.setItem(CHAVE_ENDERECO, JSON.stringify(endereco));
 }
@@ -426,6 +427,7 @@ function carregarEnderecoSalvo(){
   if(endereco.bairro) document.getElementById("campo-bairro").value = endereco.bairro;
   if(endereco.cidade) document.getElementById("campo-cidade").value = endereco.cidade;
   if(endereco.numero) document.getElementById("campo-numero").value = endereco.numero;
+  if(endereco.complemento) document.getElementById("campo-complemento").value = endereco.complemento;
 }
 
 /* ------------------------------------------------------------
@@ -644,6 +646,9 @@ function iniciarCarrinho(){
     salvarEnderecoAtual();
   });
 
+  document.getElementById("campo-complemento")?.addEventListener("input", () => {
+    salvarEnderecoAtual();
+  });
   // Rua, bairro e cidade vêm preenchidos pelo CEP, mas o cliente pode
   // corrigir manualmente (ex: CEP não muito preciso, endereço novo, etc.)
   ["campo-rua", "campo-bairro", "campo-cidade"].forEach(id => {
