@@ -565,8 +565,7 @@ function montarMensagemWhatsapp(){
       if(cidade) mensagem += ` - ${cidade}`;
       if(cep) mensagem += ` (CEP: ${cep})`;
     }
-  }
-  }else{
+    }else{
     mensagem += `\nForma de recebimento: Entrega (frete a combinar à parte)`;
     if(rua || cep){
       const complemento = document.getElementById("campo-complemento")?.value?.trim() || "";
@@ -578,6 +577,7 @@ function montarMensagemWhatsapp(){
       if(cidade) mensagem += ` - ${cidade}`;
       if(cep) mensagem += ` (CEP: ${cep})`;
     }
+  } 
   }
   return mensagem;
 }
