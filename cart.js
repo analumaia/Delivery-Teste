@@ -577,7 +577,6 @@ function montarMensagemWhatsapp(){
       if(cidade) mensagem += ` - ${cidade}`;
       if(cep) mensagem += ` (CEP: ${cep})`;
     }
-  } 
   }
   return mensagem;
 }
