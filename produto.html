@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produto — Bakeria</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===================== CABEÇALHO (idêntico ao da index.html) ===================== -->
+  <header class="cabecalho">
+    <div class="container cabecalho-interno">
+      <a href="index.html" class="logo">
+        <span class="logo-caixa">
+          <img src="logo.png" alt="Bakeria Confeitaria Artesanal">
+        </span>
+      </a>
+
+      <!-- Mascote: só aparece em telas de computador/tablet (escondida no celular via CSS) -->
+      <img src="mascote-cabecalho.png" alt="" class="mascote-cabecalho" aria-hidden="true" style="height:44px;width:auto;max-width:60px;">
+
+      <button type="button" class="btn-carrinho" id="btn-abrir-carrinho" aria-label="Abrir carrinho">
+        🛒 Carrinho
+        <span class="badge-carrinho" id="badge-carrinho">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================== DETALHE DO PRODUTO ===================== -->
+  <main class="container pagina-produto" id="produto-detalhe-container">
+    <!-- Preenchido automaticamente por produto.js a partir de data.js -->
+  </main>
+
+  <!-- ===================== RODAPÉ ===================== -->
+  <footer class="rodape">
+    <span class="logo-caixa logo-caixa-rodape">
+      <img src="logo-rodape.png" alt="Bakeria Confeitaria Artesanal">
+    </span>
+    <p>Feito com carinho, pedido pelo WhatsApp. Todos os direitos reservados.</p>
+  </footer>
+
+  <!-- ===================== CARRINHO (painel lateral fixo, igual em todas as páginas) ===================== -->
+  <div class="overlay-carrinho" id="overlay-carrinho"></div>
+  <aside class="painel-carrinho" id="painel-carrinho" aria-label="Carrinho de compras">
+    <div class="carrinho-cabecalho">
+      <h2>Seu carrinho</h2>
+      <button type="button" class="fechar-carrinho" id="btn-fechar-carrinho" aria-label="Fechar carrinho">&times;</button>
+    </div>
+
+    <!-- Área do meio: única parte que rola. Lista de produtos + formulário
+         inteiro, juntos, para o Total e o botão de pedido (fora daqui,
+         embaixo) ficarem sempre visíveis, não importa o quanto cresça. -->
+    <div class="carrinho-scroll">
+      <div class="lista-carrinho" id="lista-carrinho"></div>
+
+      <div class="carrinho-dados">
+        <h3 class="titulo-dados-pedido">Dados do pedido</h3>
+
+        <div class="campo-nome">
+          <label for="campo-nome-cliente">Seu nome <span class="obrigatorio">*</span></label>
+          <input type="text" id="campo-nome-cliente" placeholder="Digite seu nome">
+        </div>
+
+        <p class="dica-data-entrega-geral">
+          📅 A data de entrega/retirada agora é escolhida individualmente para cada produto, na lista acima. Pedidos de encomenda podem precisar de mais dias — combine pelo WhatsApp se a data for muito em cima da hora.
+        </p>
+
+        <div class="campo-tipo-entrega">
+          <label>Como você quer receber?</label>
+          <div class="opcoes-entrega">
+            <label class="opcao-entrega">
+              <input type="radio" name="tipo-entrega" id="tipo-entrega-retirada" value="retirada" checked>
+              <span>🏪 Retirada</span>
+            </label>
+            <label class="opcao-entrega">
+              <input type="radio" name="tipo-entrega" id="tipo-entrega-entrega" value="entrega">
+              <span>🛵 Entrega</span>
+            </label>
+          </div>
+        </div>
+
+        <p class="aviso-retirada" id="aviso-retirada">
+          🏪 <span id="texto-endereco-retirada"></span>
+          <a href="#" id="link-mapa-retirada" class="link-mapa" target="_blank" rel="noopener">📍 Ver no mapa</a>
+        </p>
+
+        <p class="aviso-frete" id="aviso-frete">
+          🛵 O frete é calculado à parte e combinado direto pelo WhatsApp — o valor mostrado aqui é só dos produtos.
+        </p>
+
+        <div class="campo-endereco" id="bloco-endereco">
+          <label for="campo-cep">CEP de entrega <span class="obrigatorio">*</span></label>
+          <input type="text" id="campo-cep" placeholder="00000-000" inputmode="numeric" maxlength="9">
+          <span class="cep-status" id="cep-status"></span>
+
+          <div class="linha-endereco">
+            <div class="campo-endereco-item campo-rua-wrap">
+              <label for="campo-rua">Rua</label>
+              <input type="text" id="campo-rua" placeholder="Preenchido pelo CEP (edite se precisar)">
+            </div>
+            <div class="campo-endereco-item campo-numero-wrap">
+              <label for="campo-numero">Número</label>
+              <input type="text" id="campo-numero" placeholder="Nº" inputmode="numeric">
+            </div>
+          </div>
+
+          <div class="linha-endereco">
+            <div class="campo-endereco-item">
+              <label for="campo-bairro">Bairro</label>
+              <input type="text" id="campo-bairro" placeholder="Preenchido pelo CEP (edite se precisar)">
+            </div>
+            <div class="campo-endereco-item">
+              <label for="campo-cidade">Cidade</label>
+              <input type="text" id="campo-cidade" placeholder="Preenchido pelo CEP (edite se precisar)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rodapé fixo: sempre visível, não rola junto com o resto. -->
+    <div class="carrinho-fixo">
+      <div class="campo-cupom">
+        <label for="campo-cupom">Cupom de desconto</label>
+        <div class="cupom-linha">
+          <input type="text" id="campo-cupom" placeholder="Digite o código" autocapitalize="characters">
+          <button type="button" id="btn-aplicar-cupom">Aplicar</button>
+        </div>
+        <p class="cupom-status" id="cupom-status"></p>
+      </div>
+
+      <div class="carrinho-total-bloco" id="carrinho-total-bloco">
+        <div class="linha-valor linha-subtotal" id="linha-subtotal" hidden>
+          <span>Subtotal</span>
+          <span id="subtotal-valor">R$ 0,00</span>
+        </div>
+        <div class="linha-valor linha-desconto" id="linha-desconto" hidden>
+          <span>Desconto (<span id="cupom-aplicado-codigo"></span>)</span>
+          <span id="desconto-valor">- R$ 0,00</span>
+        </div>
+        <div class="linha-valor linha-total-final">
+          <span>Total</span>
+          <span id="carrinho-total-valor">R$ 0,00</span>
+        </div>
+      </div>
+
+      <button type="button" class="btn-pedido" id="btn-fazer-pedido" disabled>
+        Fazer pedido pelo WhatsApp
+      </button>
+      <p class="aviso-obrigatorio" id="aviso-obrigatorio">* Nome, CEP e a data de cada item são obrigatórios para fazer o pedido</p>
+    </div>
+  </aside>
+
+  <script src="data.js"></script>
+  <script src="cart.js"></script>
+  <script src="produto.js"></script>
+</body>
+</html>
