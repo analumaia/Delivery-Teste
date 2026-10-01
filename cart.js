@@ -566,7 +566,19 @@ function montarMensagemWhatsapp(){
       if(cep) mensagem += ` (CEP: ${cep})`;
     }
   }
-
+  }else{
+    mensagem += `\nForma de recebimento: Entrega (frete a combinar à parte)`;
+    if(rua || cep){
+      const complemento = document.getElementById("campo-complemento")?.value?.trim() || "";
+      let linhaRua = numero ? `${rua}, nº ${numero}` : `${rua} (sem número informado)`;
+      if(complemento) linhaRua += ` (${complemento})`;
+      
+      mensagem += `\nEndereço de entrega: ${linhaRua}`;
+      if(bairro) mensagem += ` - ${bairro}`;
+      if(cidade) mensagem += ` - ${cidade}`;
+      if(cep) mensagem += ` (CEP: ${cep})`;
+    }
+  }
   return mensagem;
 }
 
