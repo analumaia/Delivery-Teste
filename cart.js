@@ -10,7 +10,6 @@
 const WHATSAPP_NUMERO = "5538997248270";
 const CHAVE_CARRINHO = "carrinho_delivery";
 const CHAVE_NOME = "carrinho_nome_cliente";
-const CHAVE_ENDERECO = "carrinho_endereco_cliente";
 const CHAVE_TIPO_ENTREGA = "carrinho_tipo_entrega";
 const CHAVE_CUPOM = "carrinho_cupom_aplicado";
 
@@ -252,18 +251,6 @@ function carregarTipoEntregaSalvo(){
   if(radio) radio.checked = true;
 }
 
-function atualizarVisibilidadeEntrega(){
-  const tipo = obterTipoEntrega();
-  const avisoFrete = document.getElementById("aviso-frete");
-  const avisoRetirada = document.getElementById("aviso-retirada");
-  const blocoEndereco = document.getElementById("bloco-endereco");
-  const avisoObrigatorio = document.getElementById("aviso-obrigatorio");
-
-  const ehEntrega = tipo === "entrega";
-
-  if(avisoFrete) avisoFrete.style.display = ehEntrega ? "block" : "none";
-  if(blocoEndereco) blocoEndereco.style.display = ehEntrega ? "block" : "none";
-
   if(avisoRetirada){
     avisoRetirada.style.display = ehEntrega ? "none" : "block";
     const textoEndereco = document.getElementById("texto-endereco-retirada");
@@ -279,110 +266,11 @@ function atualizarVisibilidadeEntrega(){
     }
   }
 
-  if(avisoObrigatorio){
-    avisoObrigatorio.textContent = ehEntrega
-      ? "* Nome, CEP e a data de cada item são obrigatórios para fazer o pedido"
-      : "* Nome e a data de cada item são obrigatórios para fazer o pedido";
-  }
-
   // Realça visualmente a opção marcada (fallback para navegadores sem :has())
   document.querySelectorAll(".opcao-entrega").forEach(label => {
     const input = label.querySelector('input[name="tipo-entrega"]');
     label.classList.toggle("selecionada", !!input?.checked);
   });
-}
-
-/* ------------------------------------------------------------
-   ENDEREÇO — busca automática de CEP via ViaCEP (API pública,
-   gratuita, sem necessidade de chave/cadastro).
-   https://viacep.com.br
-
-   Rua, bairro e cidade vêm automaticamente do CEP.
-   Número é sempre digitado manualmente (o CEP não indica isso).
------------------------------------------------------------- */
-function obterEndereco(){
-  try{
-    const dados = localStorage.getItem(CHAVE_ENDERECO);
-    return dados ? JSON.parse(dados) : {};
-  }catch(e){
-    return {};
-  }
-}
-
-function salvarEnderecoAtual(){
-  const endereco = {
-    cep: document.getElementById("campo-cep")?.value || "",
-    rua: document.getElementById("campo-rua")?.value || "",
-    bairro: document.getElementById("campo-bairro")?.value || "",
-    cidade: document.getElementById("campo-cidade")?.value || "",
-    numero: document.getElementById("campo-numero")?.value || "",
-    complemento: document.getElementById("campo-complemento")?.value || ""
-  };
-  localStorage.setItem(CHAVE_ENDERECO, JSON.stringify(endereco));
-}
-
-function formatarCepDigitado(valor){
-  const digitos = valor.replace(/\D/g, "").slice(0, 8);
-  if(digitos.length > 5) return digitos.slice(0, 5) + "-" + digitos.slice(5);
-  return digitos;
-}
-
-function limparCamposEndereco(){
-  ["campo-rua", "campo-bairro", "campo-cidade"].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.value = "";
-  });
-}
-
-function definirStatusCep(texto, tipo){
-  const statusEl = document.getElementById("cep-status");
-  if(!statusEl) return;
-  statusEl.textContent = texto;
-  statusEl.className = "cep-status" + (tipo ? ` ${tipo}` : "");
-}
-
-async function buscarEnderecoPorCep(){
-  const campoCep = document.getElementById("campo-cep");
-  if(!campoCep) return;
-
-  const digitos = campoCep.value.replace(/\D/g, "");
-
-  if(digitos.length !== 8){
-    limparCamposEndereco();
-    definirStatusCep(digitos.length === 0 ? "" : "CEP incompleto.", digitos.length === 0 ? "" : "erro");
-    atualizarEstadoBotaoPedido();
-    return;
-  }
-
-  definirStatusCep("Buscando endereço...", "buscando");
-
-  try{
-    const resposta = await fetch(`https://viacep.com.br/ws/${digitos}/json/`);
-    const dados = await resposta.json();
-
-    if(dados.erro){
-      limparCamposEndereco();
-      definirStatusCep("CEP não encontrado. Confira os números.", "erro");
-      atualizarEstadoBotaoPedido();
-      return;
-    }
-
-    document.getElementById("campo-rua").value = dados.logradouro || "";
-    document.getElementById("campo-bairro").value = dados.bairro || "";
-    document.getElementById("campo-cidade").value =
-      [dados.localidade, dados.uf].filter(Boolean).join(" - ");
-
-    definirStatusCep("Endereço encontrado ✓", "sucesso");
-    salvarEnderecoAtual();
-    atualizarEstadoBotaoPedido();
-
-    // Se o CEP não tem número de rua associado (ex: alguns CEPs de zona
-    // rural), o campo de número segue liberado para digitação manual.
-    document.getElementById("campo-numero")?.focus();
-  }catch(erro){
-    definirStatusCep("Não deu pra buscar o CEP agora. Verifique sua internet.", "erro");
-    atualizarEstadoBotaoPedido();
-  }
 }
 
 /* ------------------------------------------------------------
@@ -415,19 +303,6 @@ function formularioValido(){
 function atualizarEstadoBotaoPedido(){
   const btnPedido = document.getElementById("btn-fazer-pedido");
   if(btnPedido) btnPedido.disabled = !formularioValido();
-}
-
-function carregarEnderecoSalvo(){
-  const endereco = obterEndereco();
-  const campoCep = document.getElementById("campo-cep");
-  if(!campoCep) return;
-
-  if(endereco.cep) campoCep.value = endereco.cep;
-  if(endereco.rua) document.getElementById("campo-rua").value = endereco.rua;
-  if(endereco.bairro) document.getElementById("campo-bairro").value = endereco.bairro;
-  if(endereco.cidade) document.getElementById("campo-cidade").value = endereco.cidade;
-  if(endereco.numero) document.getElementById("campo-numero").value = endereco.numero;
-  if(endereco.complemento) document.getElementById("campo-complemento").value = endereco.complemento;
 }
 
 /* ------------------------------------------------------------
